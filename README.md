@@ -33,7 +33,7 @@ if you want to make any adjustments to the container, e.g. to run a different ra
 
 ### run on hpc/cloud with singularity
 
-documentation for the singularity application is [here](https://docs.sylabs.io/guides/3.6/user-guide/cli.html). check out the section on [host architectures](https://github.com/slaide/docker-ragtag/edit/main/README.md#host-computer-architecture) before continuing.
+documentation for the singularity application is [here](https://docs.sylabs.io/guides/3.6/user-guide/cli.html). check out the section on [host architectures](https://github.com/slaide/docker-ragtag/blob/main/README.md#host-computer-architecture) before continuing.
 
 first follow the steps above, but stop at the indicated step, then:
 ```sh
