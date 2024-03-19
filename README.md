@@ -7,12 +7,12 @@ to run this container on your own computer:
 1. install [docker desktop](https://www.docker.com/products/docker-desktop/)
 1. start the docker desktop application, and just leave that window open in the background
 1. in the terminal on your computer, run:
-  1. ```git clone https://github.com/slaide/docker-ragtag ```
-  1. ```cd docker-ragtag ```
-  1. ```cp /path/to/my_reference.fasta ./myfiles/reference.fasta ```
-  1. ```cp /path/to/my_query.fasta ./myfiles/query.fasta ```
-  1. ```docker build -t bioinf/mummer:4.0.0rc1 -f Dockerfile .``` - this will take a couple minutes
-  1. ```docker run bioinf/mummer:4.0.0rc1``` - this actually runs your scaffold query, so it might take a LONG time (minutes, hours, days...)
+    1. ```git clone https://github.com/slaide/docker-ragtag ```
+    1. ```cd docker-ragtag ```
+    1. ```cp /path/to/my_reference.fasta ./myfiles/reference.fasta ```
+    1. ```cp /path/to/my_query.fasta ./myfiles/query.fasta ```
+    1. ```docker build -t bioinf/mummer:4.0.0rc1 -f Dockerfile .``` - this will take a couple minutes
+    1. ```docker run bioinf/mummer:4.0.0rc1``` - this actually runs your scaffold query, so it might take a LONG time (minutes, hours, days...)
 
 ## notes
 
