@@ -75,7 +75,11 @@ to build the image to run on an amd64 computer, build the image with:
 two notes regarding this cross-build:
 1. this image cannot be run on a platform other than one with the target architecture, i.e. if this image is built for amd64, it cannot be run on arm64 architecture. to just test the image, build and run it by following the regular instructions above, the cross-build only to run on a remote computer.
 2. there are many other platforms available, other than linux/amd64. this cross-build feature is based on qemu, which support a wide variety of architectures. though note that the linux component there is required, since the container image is based on debian linux (which itself does not require cross-building, so e.g. this container using linux can be run on an M1 macbook with macos without having to cross-build to macos/arm64).
-3. (**this is yet untested**) I assume that you can use singularity to convert an existing docker image (that has already been built) to a container.sif file, regardless of architecture used for the docker image.
+3. singularity is not available for macos. but there is a docker image exactly for this purpose (a docker image that runs singularity in a linux environment to create a built docker image to a singularity image).
+    - the image is available [here](https://quay.io/repository/singularity/docker2singularity).
+    - for brevity, the command is this:
+        > docker run -v /var/run/docker.sock:/var/run/docker.sock -v /Users/myusername/Downloads:/output --privileged -t --rm singularityware/docker2singularity bioinf/ragtag:2.1.0
+    - if the command fails with an error about missing permissions on mkdir /Users/myusername/Downloads (or your equivalent), you need to give the docker application on your computer permission to access this directory, by going to Preferences -> Resources -> File Sharing (Here, you'll see a list of file paths that Docker is allowed to access.) -> Add the Folder by clicking the '+' button and navigating to /Users/myusername/Downloads and adding it to the list. Then click 'Apply & Restart' to make the changes take effect).
 
 ## software used
 
