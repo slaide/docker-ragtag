@@ -105,7 +105,10 @@ containerization software, commonly used to run containers in HPC environments. 
 links:
 - [homepage](https://sylabs.io/)
 - [cli docs](https://docs.sylabs.io/guides/3.6/user-guide/cli.html)
-- information from my local supercomputer ([uppmax](https://www.uppmax.uu.se/)) on docker+singularity
+- [docker+singularity by NASA](https://www.nas.nasa.gov/hecc/support/kb/converting-docker-images-to-singularity-for-use-on-pleiades_643.html)
+- [definition files](https://docs.sylabs.io/guides/3.7/user-guide/definition_files.html)
+- [Dockerfile to singularity.def](https://stackoverflow.com/questions/60314664/how-to-build-singularity-container-from-dockerfile)
+- information from my local supercomputer ([uppmax](https://www.uppmax.uu.se/)) on docker+singularity:
     - [user guide](https://www.uppmax.uu.se/support/user-guides/singularity-user-guide/)
     - [docker+singularity basics](https://pmitev.github.io/UPPMAX-Singularity-workshop/docker2singularity/)
 
