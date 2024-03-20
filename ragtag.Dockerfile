@@ -30,4 +30,4 @@ RUN cd /root/container/mummer-4.0.0rc1 ; make install
 #     └── query.fasta
 COPY myfiles "$ROOT/myfiles/"
 
-CMD python3 $(which ragtag.py) scaffold reference.fasta query.fasta -u -t 1 --aligner "$ROOT"/mummer4/bin/nucmer
+ENTRYPOINT python3 $(which ragtag.py) scaffold reference.fasta query.fasta -u -t 1 --aligner "$ROOT"/mummer4/bin/nucmer
