@@ -31,9 +31,6 @@ ENV python3=venv/bin/python3
 RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install spython
 
-COPY ragtag.Dockerfile ragtag.Dockerfile
-RUN python3 "$(which spython)" recipe ragtag.Dockerfile > ragtag.def
-
 # install go, which singularity is written in
 COPY installGO.sh installGO.sh
 RUN sh installGO.sh
@@ -48,6 +45,8 @@ ENV PATH="/root/local/singularity-ce-${SINGULARITY_VERSION}:$PATH"
 
 COPY myfiles myfiles/
 
+COPY ragtag.Dockerfile ragtag.Dockerfile
+RUN python3 "$(which spython)" recipe ragtag.Dockerfile > ragtag.def
+
 # this needs to be run with elevated privileges
-CMD sudo singularity build ragtag.sif ragtag.def ; \
-	du -hs ragtag.sif
+CMD sudo singularity build ragtag.sif ragtag.def
