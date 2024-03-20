@@ -1,4 +1,4 @@
-FROM debian:bookworm
+FROM python:3.11-bookworm
 
 RUN apt-get update
 # singularity build prerequisites
@@ -20,9 +20,19 @@ RUN apt-get install -y \
    zlib1g-dev \
    make \
    cmake \
-   sudo
+   sudo \
+   virtualenv \
+   tree
 
-WORKDIR local
+WORKDIR /root/local
+
+RUN virtualenv venv
+ENV python3=venv/bin/python3
+RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install spython
+
+COPY ragtag.Dockerfile ragtag.Dockerfile
+RUN python3 "$(which spython)" recipe ragtag.Dockerfile > ragtag.def
 
 # install go, which singularity is written in
 COPY installGO.sh installGO.sh
@@ -36,7 +46,8 @@ RUN sh installSingularity.sh
 	
 ENV PATH="/root/local/singularity-ce-${SINGULARITY_VERSION}:$PATH"
 
-COPY ragtag.tar ragtag.tar
+COPY myfiles myfiles/
 
-RUN singularity build -d ragtag.sif docker-archive://ragtag.tar
-RUN cp ragtag.sif /root/ragtag.sif
+# this needs to be run with elevated privileges
+CMD sudo singularity build ragtag.sif ragtag.def ; \
+	du -hs ragtag.sif
