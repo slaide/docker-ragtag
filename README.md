@@ -21,7 +21,7 @@ to run this container on your own computer:
     cp /path/to/my_query.fasta ./myfiles/ragtag_input/query.fasta
     
     # this commands build the image from the instructions in the dockerfile, this will take a couple minutes \
-    docker build -t bioinf/ragtag:2.1.0 -f Dockerfile .
+    docker build -t bioinf/ragtag:2.1.0 -f ragtag.Dockerfile .
     
     # ----- stop here if you want to run this container with singularity in the cloud/hpc
     
