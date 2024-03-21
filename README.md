@@ -12,20 +12,20 @@ to run this container on your own computer:
     ```sh
     git clone https://github.com/slaide/docker-ragtag
     cd docker-ragtag
-    # create folder for input and output files 
-    mkdir -p ./myfiles/ragtag_output \
-    mkdir -p ./myfiles/ragtag_input
+
+    # create folder for output files 
+    mkdir ./ragtag_output
     
     # copy the input files into the directory where the image/container can access them 
-    cp /path/to/my_reference.fasta ./myfiles/ragtag_input/reference.fasta \
-    cp /path/to/my_query.fasta ./myfiles/ragtag_input/query.fasta
+    cp /path/to/my_reference.fasta ./ragtag_input/reference.fasta
+    cp /path/to/my_query.fasta ./ragtag_input/query.fasta
     
-    # this commands build the image from the instructions in the dockerfile, this will take a couple minutes \
+    # this commands build the image from the instructions in the dockerfile, this will take a couple minutes
     docker build -t bioinf/ragtag:2.1.0 -f ragtag.Dockerfile .
     
     # ----- stop here if you want to run this container with singularity in the cloud/hpc
     
-    # this actually runs your scaffold query, so it might take a LONG time (minutes, hours, days...) \
+    # this actually runs your scaffold query, so it might take a LONG time (minutes, hours, days...)
     docker run bioinf/ragtag:2.1.0
     ```
 
@@ -45,23 +45,26 @@ rsync -azP ragtag210_image.tar myuser@supercomputerip:/proj/myprojectdir/ragtags
 
 # log into the remote computer and go to the project directory (all following steps afterwards are executed on the remote computer) \
 ssh myuser@supercomputerip
-cd /proj/myprojectdir/ragtagstuff
+cd /hpccloudstorage/proj/myprojectdir/ragtagstuff
 
 # Build Singularity Image from Docker Tar File \
 singularity build ragtag210_image.sif ragtag210_image.tar
 
 # Start Singularity Container with a Bind Mount (to write the output files to the remote storage, and not just to the internal file system of the container) \
-singularity instance start --bind /hpccloudstorage/proj/myprojectdir/ragtagstuff/ragtagoutput:/root/myfiles/ragtag_output ragtag210_image.sif
+singularity run --bind /hpccloudstorage/proj/myprojectdir/ragtagstuff/ragtag_output:/ragtag_output ragtag210_image.sif
+
+# leave the supercomputer terminal
+exit
 
 # copy the files back to your computer, if desired \
-rsync -azP myuser@supercomputerip:/proj/myprojectdir/ragtagstuff/ragtag_output ./myfiles/ragtag_output
+rsync -azP myuser@supercomputerip:/hpccloudstorage/proj/myprojectdir/ragtagstuff/ragtag_output ./ragtag_output
 ```
 
 ## notes
 
 ### performance considerations 
 
-make sure to adjust the ```-t 1``` argument to change the number of threads to as many as possible. ```1``` is the default (if ```-t <anynumber>``` is omitted, 1 is also used as default by ragtag), but your computer probably has at least 4.
+make sure to adjust the ```-t 1``` argument to change the number of threads to as many as possible. ```1``` is the default (if ```-t <anynumber>``` is omitted, 1 is also used as default by ragtag), but your computer probably has at least 4. this flag is found inside [insideContainer_runRagtag.sh](https://github.com/slaide/docker-ragtag/blob/main/insideContainer_runRagtag.sh).
 
 this flag is especially important when this container is run on a cloud resource, where the number of available cores on the host computer is usually specified explicitely (then set the ```-t``` flag to the same number as the host has cores assigned).
 
@@ -81,7 +84,7 @@ some notes regarding this cross-build:
 1. this image cannot be run on a platform other than one with the target architecture, i.e. if this image is built for amd64, it cannot be run on arm64 architecture. to just test the image, build and run it by following the regular instructions above, then cross-build only to run on a remote computer.
 1. there are many other platforms available, other than linux/amd64. this cross-build feature is based on [qemu](https://www.qemu.org/), which supports a wide variety of architectures. though note that the linux component in the command is required, since the container image is based on debian linux (which itself does not require cross-building, so e.g. this container using linux can be run on an M1 macbook with macos without having to cross-build to macos/arm64).
 1. singularity is not available for macos (in fact, it is only available for linux!). to convert a docker image to singularity on any othe rplatform, regardless of architecture (amd64 vs. arm64, does not matter if this differs between your computer and the computer you want to run the singularity container on), you need to do the conversion inside another docker container. this repository contains a script that handles the cross-build and docker to singularity conversion.
-    - the script is this file: [createAMD64Singularity.sh](https://github.com/slaide/docker-ragtag/blob/main/createAMD64Singularity.sh) (run this script inside the ```docker-ragtag``` folder, the .sif file will then also be inside this folder). run this script _after_ you have copied all requisite files into ```./myfiles/ragtag_input```!
+    - the script is this file: [createAMD64Singularity.sh](https://github.com/slaide/docker-ragtag/blob/main/createAMD64Singularity.sh) (run this script inside the ```docker-ragtag``` folder, the .sif file will then also be inside this folder). run this script _after_ you have copied all requisite files into ```./ragtag_input```!
 
 ## software used
 
