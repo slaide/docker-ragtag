@@ -101,6 +101,29 @@ links:
 - [dockerfile docs](https://docs.docker.com/reference/dockerfile/)
 - [bind storage](https://docs.docker.com/storage/bind-mounts/) to access storage that exists outside the container from inside the container
 
+some notes:
+- ```RUN``` supports shell-style line breaks, while ```CMD``` and ```ENTRYPOINT``` do NOT!
+
+	so this works:
+
+	``` RUN apt-get install -y \
+	>gcc && \
+	apt-get install -y \
+	make \
+	cmake
+	```
+
+	but this does not
+
+	```
+	CMD python3  \
+	runMyExpensiveCalculation.py
+	```
+
+	though this does (no line break, but use of the ```&&``` operator, note the quotation marks around the command)
+
+	``` CMD "clang myfile.c -o myprog && ./myprog" ```
+
 ### singularity
 
 containerization software, commonly used to run containers in HPC environments. the main difference to docker is a more restrictive container environment, i.e. some container <-> host interactions are possible with docker, but not with singularity. still shares many similarities with docker, hence the existence of tools to convert and run docker images in singularity environments.
@@ -114,6 +137,17 @@ links:
 - information from my local supercomputer ([uppmax](https://www.uppmax.uu.se/)) on docker+singularity:
     - [user guide](https://www.uppmax.uu.se/support/user-guides/singularity-user-guide/)
     - [docker+singularity basics](https://pmitev.github.io/UPPMAX-Singularity-workshop/docker2singularity/)
+
+some notes:
+- singularity requires specifying ```ENTRYPOINT``` explicitely, which defaults to something like "/bin/sh -c" in docker
+- if no ```WORKDIR``` is specified, mounting directories does not work (at least seems like it)
+- in docker, the workding directory (wd) resets to ```WORKDIR``` after every ```RUN```. in singularity, this is not the case (wd is preserved between RUN commands)!
+- line continuations are weird with spython, e.g.
+	```
+	COPY myfile myfile \
+	# hello there
+	```
+	will ignore the hash at the beginning of the line and turn the comment into a continuation of the copy command
 
 ### ragtag
 

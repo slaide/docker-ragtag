@@ -24,12 +24,32 @@ RUN apt-get install -y \
    virtualenv \
    tree
 
-WORKDIR /root/local
+# -- begin ragtag section
+RUN apt install -fy make cmake tree micro wget curl git tar virtualenv
+RUN apt install -fy gcc g++
+# -- end ragtag section
+
+WORKDIR /root
 
 RUN virtualenv venv
-ENV python3=venv/bin/python3
-RUN python3 -m pip install --upgrade pip
-RUN python3 -m pip install spython
+ENV py3=/root/venv/bin/python3
+RUN $py3 -m pip install --upgrade pip
+RUN $py3 -m pip install spython
+
+# -- begin ragtag section
+RUN $py3 -m pip install RagTag==2.1.0
+# -- end ragtag section
+
+# -- begin ragtag section
+RUN wget https://github.com/mummer4/mummer/releases/download/v4.0.0rc1/mummer-4.0.0rc1.tar.gz
+RUN tar -xvf mummer-4.0.0rc1.tar.gz
+
+RUN cd mummer-4.0.0rc1 && \
+	 ./configure --prefix /root/mummer4 && \
+	 make -j CPPFLAGS="-O3 -DSIXTYFOURBITS" && \
+	 make install && \
+	 cd /root
+# -- end ragtag section
 
 # install go, which singularity is written in
 COPY installGO.sh installGO.sh
@@ -43,10 +63,18 @@ RUN sh installSingularity.sh
 	
 ENV PATH="/root/local/singularity-ce-${SINGULARITY_VERSION}:$PATH"
 
-COPY myfiles myfiles/
-
 COPY ragtag.Dockerfile ragtag.Dockerfile
-RUN python3 "$(which spython)" recipe ragtag.Dockerfile > ragtag.def
+RUN /root/venv/bin/spython recipe ragtag.Dockerfile > ragtag.def
+
+# make input files visible to singularity
+COPY ragtag_input /root/ragtag_input/
+
+# required for ragtag to internally be able to run subcommands (which \
+# is done by using popen, without doing any lookup themselves..)
+ENV PATH="/root/venv/bin:${PATH}"
+
+COPY runsingularity.sh /root/runsingularity.sh
 
 # this needs to be run with elevated privileges
-CMD sudo singularity build ragtag.sif ragtag.def
+ENTRYPOINT ["/bin/sh"]
+CMD ["/root/runsingularity.sh"]
