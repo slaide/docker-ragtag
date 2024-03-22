@@ -73,8 +73,16 @@ COPY ragtag_input /root/ragtag_input/
 # is done by using popen, without doing any lookup themselves..)
 ENV PATH="/root/venv/bin:${PATH}"
 
-COPY runsingularity.sh /root/runsingularity.sh
+RUN chmod +x /root/venv/bin/*
+RUN chmod +x /root/mummer4/bin/*
 
-# this needs to be run with elevated privileges
-ENTRYPOINT ["/bin/sh"]
-CMD ["/root/runsingularity.sh"]
+RUN mkdir -p /root/ragtag_output
+
+COPY runragtag.sh /root/runragtag.sh
+RUN chmod +x /root/runragtag.sh
+
+COPY runsingularity.sh /root/runsingularity.sh
+RUN chmod +x /root/runsingularity.sh
+
+# this needs to be run with elevated privileges (hence the --privileged flag in the docker run command)
+ENTRYPOINT ["/root/runsingularity.sh"]

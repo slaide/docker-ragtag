@@ -14,7 +14,7 @@ to run this container on your own computer:
     cd docker-ragtag
 
     # create folder for output files 
-    mkdir ./ragtag_output
+    mkdir -p ./ragtag_output
     
     # copy the input files into the directory where the image/container can access them 
     cp /path/to/my_reference.fasta ./ragtag_input/reference.fasta
@@ -26,7 +26,7 @@ to run this container on your own computer:
     # ----- stop here if you want to run this container with singularity in the cloud/hpc
     
     # this actually runs your scaffold query, so it might take a LONG time (minutes, hours, days...)
-    docker run bioinf/ragtag:2.1.0
+    docker run --mount type=bind,source=./ragtag_output,target=/root/ragtag_output bioinf/ragtag:2.1.0
     ```
 
 if you want to make any adjustments to the container, e.g. to run a different ragtag command, see the dockerfile documentation [here](https://docs.docker.com/reference/dockerfile/). then you can change ```docker-ragtag/Dockerfile``` and continue from there.
@@ -51,7 +51,7 @@ cd /hpccloudstorage/proj/myprojectdir/ragtagstuff
 singularity build ragtag210_image.sif ragtag210_image.tar
 
 # Start Singularity Container with a Bind Mount (to write the output files to the remote storage, and not just to the internal file system of the container) \
-singularity run --bind /hpccloudstorage/proj/myprojectdir/ragtagstuff/ragtag_output:/ragtag_output ragtag210_image.sif
+singularity run --bind /hpccloudstorage/proj/myprojectdir/ragtagstuff/ragtag_output:/root/ragtag_output ragtag210_image.sif
 
 # leave the supercomputer terminal
 exit
@@ -106,8 +106,9 @@ some notes:
 
 	so this works:
 
-	``` RUN apt-get install -y \
-	>gcc && \
+	```
+	RUN apt-get install -y \
+	gcc && \
 	apt-get install -y \
 	make \
 	cmake

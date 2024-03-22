@@ -41,5 +41,15 @@ COPY ragtag_input /root/ragtag_input/
 # is done by using popen, without doing any lookup themselves..)
 ENV PATH="/root/venv/bin:${PATH}"
 
-ENTRYPOINT ["/root/venv/bin/python3", "/root/venv/bin/ragtag.py"]
-CMD scaffold /root/ragtag_input/reference.fasta /root/ragtag_input/query.fasta -u -t 1 --aligner /root/mummer4/bin/nucmer
+RUN chmod +x /root/venv/bin/*
+RUN chmod +x /root/mummer4/bin/*
+
+RUN mkdir -p /root/ragtag_output
+
+COPY runragtag.sh /root/runragtag.sh
+RUN chmod +x /root/runragtag.sh
+
+#ENTRYPOINT /root/venv/bin/python3
+# CMD /root/venv/bin/python3 /root/venv/bin/ragtag.py scaffold /root/ragtag_input/reference.fasta /root/ragtag_input/query.fasta -u -t 1 --aligner /root/mummer4/bin/nucmer
+# CMD /root/mummer4/bin/nucmer --maxmatch -l 100 -c 500 -p /root/ragtag_output/ragtag.scaffold.asm /root/ragtag_input/reference.fasta /root/ragtag_input/query.fasta
+CMD /root/runragtag.sh
